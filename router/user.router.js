@@ -5,8 +5,6 @@ module.exports = function (app) {
   // Create a new user
   app.post("/api/user", user.create);
 
-  app.post("/api/login", user.login);
-
   // Retrieve all user
   app.get("/api/user", user.findAll);
 

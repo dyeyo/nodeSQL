@@ -3,7 +3,7 @@ const User = db.user;
 const bcryptjs = require('bcryptjs');
 
 exports.findAll = (req, res) => {
-  user.findAll().then((users) => {
+  User.findAll().then((users) => {
     res.status(200).json({
       status: true,
       data: users,

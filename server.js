@@ -4,13 +4,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 const db = require("./config/config");
 const PORT = 8081
-db.sequelize.sync({ force: false }).then(() => {
+const AuthRouter = require('./router/auth.router');
+const BaseRouter = require('./router');
+
+db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and Resync with { force: true }");
 });
 
-require("./router/book.router")(app);
-require("./router/user.router")(app);
-require("./router/auth.router")(app);
+app.use('/auth', AuthRouter);
+app.use('/api', BaseRouter);
 
 // Create & Listen Server
 app.listen(PORT, function () {

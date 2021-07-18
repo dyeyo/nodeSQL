@@ -1,34 +1,34 @@
+const express = require('express');
 const { check } = require("express-validator");
-const { JWTValidate } = require('../middleware/JWTValidate')
+const { JWTValidate } = require('../middleware/JWTValidate');
+const router = express.Router();
+const user = require("../controllers/user.controller");
 
-module.exports = function (app) {
+// Create a new user
+router.post("/api/user", [
+  check('name', 'Este campo es obligatorio').not().isEmpty(),
+  check('email', 'Este campo es obligatorio').not().isEmpty(),
+  check('email', 'El correo no es valido').isEmail(),
+  check('password', 'Este campo es obligatorio').not().isEmpty(),
+  check('password', 'El password debe tener mas de 3 caracteres').isLength({ min: 3 }),
+], user.create);
 
-  const user = require("../controllers/user.controller");
+// Retrieve all user
+router.get("/api/user", [JWTValidate], user.findAll);
 
-  // Create a new user
-  app.post("/api/user", [
-    check('name', 'Este campo es obligatorio').not().isEmpty(),
-    check('email', 'Este campo es obligatorio').not().isEmpty(),
-    check('email', 'El correo no es valido').isEmail(),
-    check('password', 'Este campo es obligatorio').not().isEmpty(),
-    check('password', 'El password debe tener mas de 3 caracteres').isLength({ min: 3 }),
-  ], user.create);
+// Retrieve a single user by Id
+router.get("/api/user/:userId", [JWTValidate], user.findByPk);
 
-  // Retrieve all user
-  app.get("/api/user", [JWTValidate], user.findAll);
+// Update a user with Id
+router.put("/api/user/:userId", [
+  check('name', 'Este campo es obligatorio').not().isEmpty(),
+  check('email', 'Este campo es obligatorio').not().isEmpty(),
+  check('email', 'El correo no es valido').isEmail(),
+  check('password', 'Este campo es obligatorio').not().isEmpty(),
+  check('password', 'El password debe tener mas de 3 caracteres').isLength({ min: 3 }),
+], user.update);
 
-  // Retrieve a single user by Id
-  app.get("/api/user/:userId", [JWTValidate], user.findByPk);
+// Delete a user with Id
+router.delete("/api/user/:userId", [JWTValidate], user.delete);
 
-  // Update a user with Id
-  app.put("/api/user/:userId", [
-    check('name', 'Este campo es obligatorio').not().isEmpty(),
-    check('email', 'Este campo es obligatorio').not().isEmpty(),
-    check('email', 'El correo no es valido').isEmail(),
-    check('password', 'Este campo es obligatorio').not().isEmpty(),
-    check('password', 'El password debe tener mas de 3 caracteres').isLength({ min: 3 }),
-  ], user.update);
-
-  // Delete a user with Id
-  app.delete("/api/user/:userId", [JWTValidate], user.delete);
-};
+module.exports = router;

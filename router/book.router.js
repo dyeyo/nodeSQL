@@ -1,33 +1,35 @@
+const express = require('express');
+
+const { check } = require('express-validator');
 const { JWTValidate } = require('../middleware/JWTValidate')
+const router = express.Router();
+const book = require("../controllers/book.controller");
 
-module.exports = function (app) {
+// Create a new book
+router.post("/api/book", [
+  JWTValidate,
+  check('name', 'Este campo es obligatorio').not().isEmpty(),
+  check('price', 'Este campo es obligatorio').not().isEmpty(),
+  check('language', 'El correo no es valido').not().isEmpty(),
+  check('total_pages', 'Este campo es obligatorio').not().isEmpty(),
+], book.create);
 
-  const book = require("../controllers/book.controller");
+// Retrieve all book
+router.get("/api/book", book.findAll);
 
-  // Create a new book
-  app.post("/api/book", [
-    JWTValidate,
-    check('name', 'Este campo es obligatorio').not().isEmpty(),
-    check('price', 'Este campo es obligatorio').not().isEmpty(),
-    check('language', 'El correo no es valido').not().isEmpty(),
-    check('total_pages', 'Este campo es obligatorio').not().isEmpty(),
-  ], book.create);
+// Retrieve a single book by Id
+router.get("/api/book/:bookId", book.findByPk);
 
-  // Retrieve all book
-  app.get("/api/book", book.findAll);
+// Update a book with Id
+router.put("/api/book/:bookId", [
+  JWTValidate,
+  check('name', 'Este campo es obligatorio').not().isEmpty(),
+  check('price', 'Este campo es obligatorio').not().isEmpty(),
+  check('language', 'El correo no es valido').not().isEmpty(),
+  check('total_pages', 'Este campo es obligatorio').not().isEmpty(),
+], book.update);
 
-  // Retrieve a single book by Id
-  app.get("/api/book/:bookId", book.findByPk);
+// Delete a book with Id
+router.delete("/api/book/:bookId", [JWTValidate], book.delete);
 
-  // Update a book with Id
-  app.put("/api/book/:bookId", [
-    JWTValidate,
-    check('name', 'Este campo es obligatorio').not().isEmpty(),
-    check('price', 'Este campo es obligatorio').not().isEmpty(),
-    check('language', 'El correo no es valido').not().isEmpty(),
-    check('total_pages', 'Este campo es obligatorio').not().isEmpty(),
-  ], book.update);
-
-  // Delete a book with Id
-  app.delete("/api/book/:bookId", [JWTValidate], book.delete);
-};
+module.exports = router;
